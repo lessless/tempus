@@ -1,13 +1,16 @@
 const gridSize = 11; // 11x11 grid
 const cellSize = 40; // Each cell is 40x40 pixels
 
+import Canvas from "../canvas.js";
+
 export const TransportationGrid = {
   mounted() {
     const canvas = this.el;
     const ctx = canvas.getContext("2d");
 
     this.setCanvasDimensions(canvas, gridSize, cellSize);
-    this.drawGrid(ctx, gridSize, cellSize);
+    Canvas.drawGrid(ctx, gridSize, cellSize);
+    this.markStartingPoint(ctx, JSON.parse(this.el.dataset.startingPosition));
 
     this.handleEvent("move", (obj) => {
       this.move(obj, ctx);
@@ -19,26 +22,10 @@ export const TransportationGrid = {
     canvas.height = gridSize * cellSize;
   },
 
-  drawGrid(ctx, gridSize, cellSize) {
-    for (let i = 0; i <= gridSize; i++) {
-      this.drawLine(ctx, i * cellSize, 0, i * cellSize, gridSize * cellSize); // Vertical line
-      this.drawLine(ctx, 0, i * cellSize, gridSize * cellSize, i * cellSize); // Horizontal line
-    }
-  },
-  drawLine(ctx, x1, y1, x2, y2) {
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-  },
-
-  drawDot(ctx, x, y) {
-    const dotRadius = 5;
-    ctx.fillStyle = "red";
-    ctx.beginPath();
-    ctx.arc(x, y, dotRadius, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.fillStyle = "black";
+  markStartingPoint(ctx, position) {
+    Canvas.drawDot(ctx, position.x * cellSize, position.y * cellSize, {
+      color: "red",
+    });
   },
 
   move({ current_position, direction, num_cells }, ctx) {
@@ -71,10 +58,12 @@ export const TransportationGrid = {
         return;
     }
 
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 5;
-    this.drawLine(ctx, startX, startY, endX, endY);
-    this.drawDot(ctx, endX, endY);
+    this.drawLine(
+      ctx,
+      { startX, startY, endX, endY },
+      { width: 5, color: "red" }
+    );
+    this.drawDot(ctx, endX, endY, "red");
 
     // reset to default style
     ctx.lineWidth = 1;

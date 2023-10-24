@@ -2,7 +2,7 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
-import { TransportationGrid } from "./transportation_grid.js";
+import { TransportationGrid } from "./hooks/transportation_grid.js";
 const Hooks = { TransportationGrid };
 
 let csrfToken = document

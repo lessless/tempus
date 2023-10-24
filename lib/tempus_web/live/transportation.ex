@@ -1,13 +1,19 @@
 defmodule TempusWeb.TransportationLive do
   use TempusWeb, :live_view
 
+def mount(_params, _session, socket) do
+  {:ok, socket
+|> assign(:last_position, %{x: 1, y: 1})
+}
+  
+end
   def render(assigns) do
     ~H"""
     <div class="flex p-8 bg-gray-100">
       <!-- Graph Section -->
       <div class="flex-1 bg-white border p-6 mr-4 rounded shadow-lg">
         <div id="chart-container">
-          <canvas id="myChart" phx-hook="TransportationGrid"></canvas>
+          <canvas id="myChart" phx-hook="TransportationGrid" data-starting-position={Jason.encode!(@last_position)}></canvas>
         </div>
       </div>
       <!-- Table Section -->
