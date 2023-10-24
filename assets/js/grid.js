@@ -53,7 +53,7 @@ export default class Grid {
     const startY = this.currentPosition.y * this.cellSize;
     const destination = numCells * this.cellSize;
 
-    this.canvas.drawArrowBetween(
+    this.canvas.lineWithMarker(
       { startX, startY, direction, destination, moveCount: ++this.moveCount },
       { width: 5, color: "lightgreen" }
     );

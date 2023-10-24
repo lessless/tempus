@@ -52,7 +52,7 @@ export default class Canvas {
     });
   }
 
-  drawArrowBetween(
+  lineWithMarker(
     { startX, startY, direction, destination, moveCount },
     opts = {}
   ) {
