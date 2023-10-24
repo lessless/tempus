@@ -2,8 +2,8 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
-import { NavigationGrid } from "./navigation_grid.js";
-const Hooks = { NavigationGrid };
+import { TransportationGrid } from "./transportation_grid.js";
+const Hooks = { TransportationGrid };
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")

@@ -1,4 +1,4 @@
-defmodule TempusWeb.SampleLive do
+defmodule TempusWeb.TransportationLive do
   use TempusWeb, :live_view
 
   def render(assigns) do
@@ -7,7 +7,7 @@ defmodule TempusWeb.SampleLive do
       <!-- Graph Section -->
       <div class="flex-1 bg-white border p-6 mr-4 rounded shadow-lg">
         <div id="chart-container">
-          <canvas id="myChart" phx-hook="NavigationGrid"></canvas>
+          <canvas id="myChart" phx-hook="TransportationGrid"></canvas>
         </div>
       </div>
       <!-- Table Section -->

@@ -1,7 +1,7 @@
 const gridSize = 11; // 11x11 grid
 const cellSize = 40; // Each cell is 40x40 pixels
 
-export const NavigationGrid = {
+export const TransportationGrid = {
   mounted() {
     const canvas = this.el;
     const ctx = canvas.getContext("2d");

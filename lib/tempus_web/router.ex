@@ -18,7 +18,7 @@ defmodule TempusWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    live "/sample", SampleLive
+    live "/transportation", TransportationLive
   end
 
   # Other scopes may use custom stacks.
