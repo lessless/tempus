@@ -62,12 +62,12 @@ export const TransportationGrid = {
         return;
     }
 
-    this.drawLine(
+    Canvas.drawLine(
       ctx,
       { startX, startY, endX, endY },
-      { width: 5, color: "red" }
+      { width: 5, color: "aquamarine" }
     );
-    this.drawDot(ctx, endX, endY, "red");
+    Canvas.drawDot(ctx, endX, endY, "red");
 
     // reset to default style
     ctx.lineWidth = 1;

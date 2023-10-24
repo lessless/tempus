@@ -51,9 +51,17 @@ export default class Canvas {
     const originalSettings = { fillStyle: ctx.fillStyle, font: ctx.font };
 
     this.drawDot(ctx, x, y, { color, radius: 12 });
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "black";
-    ctx.fillText(number, x - 5, y + 6);
+    this.drawText(ctx, x - 5, y + 6, number, { fontSize: 16 });
+
+    Object.assign(ctx, originalSettings);
+  }
+
+  static drawText(ctx, x, y, text, opts = {}) {
+    const { color = "black", fontSize = 16 } = opts;
+    const originalSettings = { fillStyle: ctx.fillStyle, font: ctx.font };
+    ctx.font = `${fontSize}px Arial`;
+
+    ctx.fillText(text, x, y);
     Object.assign(ctx, originalSettings);
   }
 }
