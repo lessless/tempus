@@ -7,6 +7,7 @@ export default class Grid {
     this.labelOffset = 10;
     this.canvas = el;
     this.ctx = el.getContext("2d");
+    this.currentPosition;
   }
 
   draw() {
@@ -15,7 +16,9 @@ export default class Grid {
   }
 
   markStartingPoint(position) {
-    Canvas.drawNumberInCircle(
+    this.currentPosition = position;
+
+    Canvas.positionMarker(
       this.ctx,
       position.x * this.cellSize,
       position.y * this.cellSize,
@@ -39,5 +42,18 @@ export default class Grid {
         endY: i * this.cellSize,
       }); // Horizontal line
     }
+  }
+
+  move(direction, numCells) {
+    // Convert current position to pixels
+    const startX = this.currentPosition.x * this.cellSize;
+    const startY = this.currentPosition.y * this.cellSize;
+    const destination = numCells * this.cellSize;
+
+    Canvas.drawArrowBetween(
+      this.ctx,
+      { startX, startY, direction, destination },
+      { width: 5, color: "aquamarine" }
+    );
   }
 }
