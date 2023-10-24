@@ -28,39 +28,28 @@ export default class Canvas {
 
   positionMarker(x, y, number, opts = {}) {
     const { color = "red" } = opts;
-    const originalSettings = {
-      fillStyle: this.ctx.fillStyle,
-      font: this.ctx.font,
-    };
 
     this.drawDot(x, y, { color, radius: this.positionMarkerRadius });
     this.drawText(x - 5, y + 6, number, { fontSize: 16 });
-
-    Object.assign(this.ctx, originalSettings);
   }
 
   drawDot(x, y, opts = {}) {
     const { color = "black", radius = 5 } = opts;
-    const originalSettings = { fillStyle: this.ctx.fillStyle };
 
-    this.ctx.fillStyle = color;
-
-    this.ctx.beginPath();
-    this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    this.ctx.fill();
-    Object.assign(this.ctx, originalSettings);
+    this.withContextSettings({ fillStyle: color }, () => {
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      this.ctx.fill();
+    });
   }
 
   drawText(x, y, text, opts = {}) {
     const { color = "black", fontSize = 16 } = opts;
-    const originalSettings = {
-      fillStyle: this.ctx.fillStyle,
-      font: this.ctx.font,
-    };
-    this.ctx.font = `${fontSize}px Arial`;
+    const fontSetting = `${fontSize}px Arial`;
 
-    this.ctx.fillText(text, x, y);
-    Object.assign(this.ctx, originalSettings);
+    this.withContextSettings({ fillStyle: color, font: fontSetting }, () => {
+      this.ctx.fillText(text, x, y);
+    });
   }
 
   drawArrowBetween(
