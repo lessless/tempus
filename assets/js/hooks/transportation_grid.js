@@ -9,7 +9,7 @@ export const TransportationGrid = {
     this.handleEvent("moved", this.moved.bind(this));
   },
 
-  moved({ direction, num_cells }) {
-    this.grid.move(direction, num_cells);
+  moved({ updated_position, direction, num_cells }) {
+    this.grid.move(updated_position, direction, num_cells);
   },
 };

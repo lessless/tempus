@@ -47,7 +47,7 @@ export default class Grid {
     }
   }
 
-  move(direction, numCells) {
+  move(updatedPosition, direction, numCells) {
     // Convert current position to pixels
     const startX = this.currentPosition.x * this.cellSize;
     const startY = this.currentPosition.y * this.cellSize;
@@ -57,5 +57,6 @@ export default class Grid {
       { startX, startY, direction, destination, moveCount: ++this.moveCount },
       { width: 5, color: "lightgreen" }
     );
+    this.currentPosition = updatedPosition;
   }
 }

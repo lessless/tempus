@@ -70,37 +70,38 @@ defmodule TempusWeb.TransportationLive do
 
   def handle_event("moved", %{"direction" => direction, "num_cells" => num_cells}, socket) do
   num_cells = String.to_integer(num_cells)
+  updated_position  = new_position(socket.assigns.current_position, direction, num_cells);
     {:noreply,
      socket
      |> push_event("moved", %{
        direction: direction,
        num_cells: num_cells,
-       current_position: socket.assigns.current_position
+       updated_position: updated_position
      })
      |> assign(
        :current_position,
-       new_position(socket.assigns.current_position, direction, num_cells)
+     updated_position
      )}
   end
 
 defp new_position(current_position, "up", num_cells) do
-    new_position = clamp_to_zero(current_position.x - num_cells)
-    %{x: new_position, y: current_position.y}
+    new_position = clamp_to_zero(current_position.y - num_cells)
+    %{x: current_position.x , y: new_position}
   end
   
   defp new_position(current_position, "down", num_cells) do
-    new_position = clamp_to_zero(current_position.x + num_cells)
-    %{x: new_position, y: current_position.y}
+    new_position = clamp_to_zero(current_position.y + num_cells)
+    %{x: current_position.x , y: new_position}
   end
   
   defp new_position(current_position, "left", num_cells) do
-    new_position = clamp_to_zero(current_position.y - num_cells)
-    %{x: current_position.x, y: new_position}
+    new_position = clamp_to_zero(current_position.x - num_cells)
+    %{x: new_position , y: current_position.y}
   end
   
   defp new_position(current_position, "right", num_cells) do
-    new_position = clamp_to_zero(current_position.y + num_cells)
-    %{x: current_position.x, y: new_position}
+    new_position = clamp_to_zero(current_position.x + num_cells)
+    %{x: new_position , y: current_position.y}
   end
 
   defp clamp_to_zero(position) do
