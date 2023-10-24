@@ -1,22 +1,29 @@
 export default class Canvas {
   static #positionMarkerRadius = 12;
 
-  static drawLine(ctx, { startX, startY, endX, endY }, opts = {}) {
-    const { width = 1, color = "black" } = opts;
-    const originalSettings = {
-      strokeStyle: ctx.strokeStyle,
-      lineWidth: ctx.lineWidth,
-    };
+  static withContextSettings(ctx, settings, action) {
+    const originalSettings = {};
 
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
+    Object.keys(settings).forEach((key) => {
+      originalSettings[key] = ctx[key];
+      ctx[key] = settings[key];
+    });
 
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.lineTo(endX, endY);
-    ctx.stroke();
-
+    action();
     Object.assign(ctx, originalSettings);
+  }
+
+  static drawLine(ctx, { startX, startY, endX, endY }, opts = {}) {
+    this.withContextSettings(
+      ctx,
+      { strokeStyle: opts.color, lineWidth: opts.width },
+      () => {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+      }
+    );
   }
 
   static positionMarker(ctx, x, y, number, opts = {}) {
@@ -52,36 +59,114 @@ export default class Canvas {
 
   static drawArrowBetween(
     ctx,
-    { startX, startY, direction, destination },
+    { startX, startY, direction, destination, moveCount },
     opts = {}
   ) {
     let endX, endY;
-    const offset = this.#positionMarkerRadius / 2;
+    const offset = this.#positionMarkerRadius;
     switch (direction) {
       case "up":
         endX = startX;
-        startY -= offset;
-        endY = startY - destination + offset * 2;
+        endY = startY - destination;
         break;
       case "right":
-        startX += offset;
-        endX = startX + destination - offset * 2;
+        endX = startX + destination;
         endY = startY;
         break;
       case "down":
         endX = startX;
-        startY += offset;
-        endY = startY + destination - offset * 2;
+        endY = startY + destination;
         break;
       case "left":
-        startX -= offset;
-        endX = startX - destination + offset * 2;
+        endX = startX - destination;
         endY = startY;
         break;
       default:
         console.error("Invalid direction");
         return;
     }
-    this.drawLine(ctx, { startX, startY, endX, endY }, opts);
+
+    // Offset endX and endY for drawing the arrowhead
+    const arrowheadOffsetX =
+      direction === "right" ? -offset : direction === "left" ? offset : 0;
+    const arrowheadOffsetY =
+      direction === "down" ? -offset : direction === "up" ? offset : 0;
+
+    // Draw the line from (startX, startY) to (endX, endY), but offset by half of positionMarkerRadius
+    this.drawLine(
+      ctx,
+      {
+        startX:
+          startX +
+          (direction === "right"
+            ? offset / 2
+            : direction === "left"
+            ? -offset / 2
+            : 0),
+        startY:
+          startY +
+          (direction === "down"
+            ? offset / 2
+            : direction === "up"
+            ? -offset / 2
+            : 0),
+        endX: endX + arrowheadOffsetX,
+        endY: endY + arrowheadOffsetY,
+      },
+      opts
+    );
+
+    this.drawArrowhead(
+      ctx,
+      { x: endX + arrowheadOffsetX, y: endY + arrowheadOffsetY, direction },
+      opts
+    );
+
+    // Draw positionMarker centered around (endX, endY)
+    this.positionMarker(ctx, endX, endY, moveCount, opts);
+  }
+
+  static drawArrowhead(ctx, { x, y, direction }, opts = {}) {
+    const { length = 10, width = 5, color = "black" } = opts;
+
+    let angle;
+    switch (direction) {
+      case "up":
+        angle = -Math.PI / 2;
+        break;
+      case "right":
+        angle = 0;
+        break;
+      case "down":
+        angle = Math.PI / 2;
+        break;
+      case "left":
+        angle = Math.PI;
+        break;
+      default:
+        console.error("Invalid direction");
+        return;
+    }
+
+    this.withContextSettings(
+      ctx,
+      { strokeStyle: color, fillStyle: color, lineWidth: width },
+      () => {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-length, width);
+        ctx.lineTo(-length, -width);
+        ctx.closePath();
+
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.restore();
+      }
+    );
   }
 }

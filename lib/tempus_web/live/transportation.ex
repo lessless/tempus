@@ -1,19 +1,25 @@
 defmodule TempusWeb.TransportationLive do
   use TempusWeb, :live_view
 
-def mount(_params, _session, socket) do
-  {:ok, socket
-|> assign(:last_position, %{x: 1, y: 1})
-}
-  
-end
+  def mount(_params, _session, socket) do
+    {:ok,
+     socket
+     |> assign(:current_position, %{x: 1, y: 1})}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="flex p-8 bg-gray-100">
       <!-- Graph Section -->
       <div class="flex-1 bg-white border p-6 mr-4 rounded shadow-lg">
         <div id="chart-container">
-          <canvas id="myChart" phx-hook="TransportationGrid" data-starting-position={Jason.encode!(@last_position)}></canvas>
+          <canvas
+            id="myChart"
+            phx-hook="TransportationGrid"
+            phx-update="ignore"
+            data-starting-position={Jason.encode!(@current_position)}
+          >
+          </canvas>
         </div>
       </div>
       <!-- Table Section -->
@@ -22,9 +28,9 @@ end
         <form phx-submit="move">
           <select class="w-auto" name="direction">
             <option value="up">Up</option>
+            <option value="right">Right</option>
             <option value="down">Down</option>
             <option value="left">Left</option>
-            <option value="right">Right</option>
           </select>
 
           <input
@@ -63,11 +69,45 @@ end
   end
 
   def handle_event("move", %{"direction" => direction, "num_cells" => num_cells}, socket) do
+  num_cells = String.to_integer(num_cells)
     {:noreply,
-     push_event(socket, "move", %{
+     socket
+     |> push_event("move", %{
        direction: direction,
        num_cells: num_cells,
-       current_position: %{x: 0, y: 0}
-     })}
+       current_position: socket.assigns.current_position
+     })
+     |> assign(
+       :current_position,
+       new_position(socket.assigns.current_position, direction, num_cells)
+     )}
+  end
+
+defp new_position(current_position, "up", num_cells) do
+    new_position = clamp_to_zero(current_position.x - num_cells)
+    %{x: new_position, y: current_position.y}
+  end
+  
+  defp new_position(current_position, "down", num_cells) do
+    new_position = clamp_to_zero(current_position.x + num_cells)
+    %{x: new_position, y: current_position.y}
+  end
+  
+  defp new_position(current_position, "left", num_cells) do
+    new_position = clamp_to_zero(current_position.y - num_cells)
+    %{x: current_position.x, y: new_position}
+  end
+  
+  defp new_position(current_position, "right", num_cells) do
+    new_position = clamp_to_zero(current_position.y + num_cells)
+    %{x: current_position.x, y: new_position}
+  end
+
+  defp clamp_to_zero(position) do
+    if position >= 0 do
+      position
+    else
+      0
+    end
   end
 end

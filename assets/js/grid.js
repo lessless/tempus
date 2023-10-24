@@ -8,6 +8,7 @@ export default class Grid {
     this.canvas = el;
     this.ctx = el.getContext("2d");
     this.currentPosition;
+    this.moveCount = 0;
   }
 
   draw() {
@@ -17,13 +18,14 @@ export default class Grid {
 
   markStartingPoint(position) {
     this.currentPosition = position;
+    this.moveCount++;
 
     Canvas.positionMarker(
       this.ctx,
       position.x * this.cellSize,
       position.y * this.cellSize,
-      1,
-      { color: "aquamarine" }
+      this.moveCount,
+      { color: "lightgreen" }
     );
   }
 
@@ -52,8 +54,8 @@ export default class Grid {
 
     Canvas.drawArrowBetween(
       this.ctx,
-      { startX, startY, direction, destination },
-      { width: 5, color: "aquamarine" }
+      { startX, startY, direction, destination, moveCount: ++this.moveCount },
+      { width: 5, color: "lightgreen" }
     );
   }
 }
