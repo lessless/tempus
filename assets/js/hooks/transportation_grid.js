@@ -5,10 +5,9 @@ export const TransportationGrid = {
     const grid = new Grid(this.el, 11, 40);
     grid.draw();
     grid.markStartingPoint(JSON.parse(this.el.dataset.startingPosition));
-
-    this.handleEvent("move", (obj) => {
-      this.move(obj, ctx);
-    });
+    // this.handleEvent("move", (obj) => {
+    //   this.move(obj, ctx);
+    // });
   },
 
   //   move({ current_position, direction, num_cells }, ctx) {
