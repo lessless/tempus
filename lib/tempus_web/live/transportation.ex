@@ -25,7 +25,7 @@ defmodule TempusWeb.TransportationLive do
       <!-- Table Section -->
       <div class="w-2/5 bg-white border p-4 rounded shadow-lg">
         <h2 class="text-xl font-semibold mb-4">Event Based State Transitions</h2>
-        <form phx-submit="move">
+        <form phx-submit="moved">
           <select class="w-auto" name="direction">
             <option value="up">Up</option>
             <option value="right">Right</option>
@@ -68,11 +68,11 @@ defmodule TempusWeb.TransportationLive do
     """
   end
 
-  def handle_event("move", %{"direction" => direction, "num_cells" => num_cells}, socket) do
+  def handle_event("moved", %{"direction" => direction, "num_cells" => num_cells}, socket) do
   num_cells = String.to_integer(num_cells)
     {:noreply,
      socket
-     |> push_event("move", %{
+     |> push_event("moved", %{
        direction: direction,
        num_cells: num_cells,
        current_position: socket.assigns.current_position
