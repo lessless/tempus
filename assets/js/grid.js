@@ -5,14 +5,16 @@ export default class Grid {
     this.gridSize = gridSize; // 11x11 grid
     this.cellSize = cellSize; // Each cell is 40x40 pixels
     this.labelOffset = 10;
-    this.canvas = el;
+    this.container = el;
     this.ctx = el.getContext("2d");
+    this.canvas = new Canvas(this.ctx);
     this.currentPosition;
     this.moveCount = 0;
   }
 
   draw() {
-    this.canvas.height = this.canvas.width = this.gridSize * this.cellSize;
+    this.container.height = this.container.width =
+      this.gridSize * this.cellSize;
     this.drawGrid(this.ctx, this.gridSize, this.cellSize);
   }
 
@@ -20,8 +22,7 @@ export default class Grid {
     this.currentPosition = position;
     this.moveCount++;
 
-    Canvas.positionMarker(
-      this.ctx,
+    this.canvas.positionMarker(
       position.x * this.cellSize,
       position.y * this.cellSize,
       this.moveCount,
@@ -31,13 +32,13 @@ export default class Grid {
 
   drawGrid() {
     for (let i = 0; i <= this.gridSize; i++) {
-      Canvas.drawLine(this.ctx, {
+      this.canvas.drawLine({
         startX: i * this.cellSize,
         startY: 0,
         endX: i * this.cellSize,
         endY: this.gridSize * this.cellSize,
       }); // Vertical line
-      Canvas.drawLine(this.ctx, {
+      this.canvas.drawLine({
         startX: 0,
         startY: i * this.cellSize,
         endX: this.gridSize * this.cellSize,
@@ -52,8 +53,7 @@ export default class Grid {
     const startY = this.currentPosition.y * this.cellSize;
     const destination = numCells * this.cellSize;
 
-    Canvas.drawArrowBetween(
-      this.ctx,
+    this.canvas.drawArrowBetween(
       { startX, startY, direction, destination, moveCount: ++this.moveCount },
       { width: 5, color: "lightgreen" }
     );

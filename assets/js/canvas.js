@@ -1,69 +1,74 @@
 export default class Canvas {
-  static #positionMarkerRadius = 12;
-
-  static withContextSettings(ctx, settings, action) {
-    const originalSettings = {};
-
-    Object.keys(settings).forEach((key) => {
-      originalSettings[key] = ctx[key];
-      ctx[key] = settings[key];
-    });
-
-    action();
-    Object.assign(ctx, originalSettings);
+  constructor(ctx) {
+    this.ctx = ctx;
+    this.positionMarkerRadius = 12;
   }
 
-  static drawLine(ctx, { startX, startY, endX, endY }, opts = {}) {
+  withContextSettings(settings, action) {
+    const originalSettings = {};
+    Object.keys(settings).forEach((key) => {
+      originalSettings[key] = this.ctx[key];
+      this.ctx[key] = settings[key];
+    });
+    action();
+    Object.assign(this.ctx, originalSettings);
+  }
+
+  drawLine({ startX, startY, endX, endY }, opts = {}) {
     this.withContextSettings(
-      ctx,
       { strokeStyle: opts.color, lineWidth: opts.width },
       () => {
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(endX, endY);
-        ctx.stroke();
+        this.ctx.beginPath();
+        this.ctx.moveTo(startX, startY);
+        this.ctx.lineTo(endX, endY);
+        this.ctx.stroke();
       }
     );
   }
 
-  static positionMarker(ctx, x, y, number, opts = {}) {
+  positionMarker(x, y, number, opts = {}) {
     const { color = "red" } = opts;
-    const originalSettings = { fillStyle: ctx.fillStyle, font: ctx.font };
+    const originalSettings = {
+      fillStyle: this.ctx.fillStyle,
+      font: this.ctx.font,
+    };
 
-    this.drawDot(ctx, x, y, { color, radius: this.#positionMarkerRadius });
-    this.drawText(ctx, x - 5, y + 6, number, { fontSize: 16 });
+    this.drawDot(x, y, { color, radius: this.positionMarkerRadius });
+    this.drawText(x - 5, y + 6, number, { fontSize: 16 });
 
-    Object.assign(ctx, originalSettings);
+    Object.assign(this.ctx, originalSettings);
   }
 
-  static drawDot(ctx, x, y, opts = {}) {
+  drawDot(x, y, opts = {}) {
     const { color = "black", radius = 5 } = opts;
-    const originalSettings = { fillStyle: ctx.fillStyle };
+    const originalSettings = { fillStyle: this.ctx.fillStyle };
 
-    ctx.fillStyle = color;
+    this.ctx.fillStyle = color;
 
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    ctx.fill();
-    Object.assign(ctx, originalSettings);
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    this.ctx.fill();
+    Object.assign(this.ctx, originalSettings);
   }
 
-  static drawText(ctx, x, y, text, opts = {}) {
+  drawText(x, y, text, opts = {}) {
     const { color = "black", fontSize = 16 } = opts;
-    const originalSettings = { fillStyle: ctx.fillStyle, font: ctx.font };
-    ctx.font = `${fontSize}px Arial`;
+    const originalSettings = {
+      fillStyle: this.ctx.fillStyle,
+      font: this.ctx.font,
+    };
+    this.ctx.font = `${fontSize}px Arial`;
 
-    ctx.fillText(text, x, y);
-    Object.assign(ctx, originalSettings);
+    this.ctx.fillText(text, x, y);
+    Object.assign(this.ctx, originalSettings);
   }
 
-  static drawArrowBetween(
-    ctx,
+  drawArrowBetween(
     { startX, startY, direction, destination, moveCount },
     opts = {}
   ) {
     let endX, endY;
-    const offset = this.#positionMarkerRadius;
+    const offset = this.positionMarkerRadius;
     switch (direction) {
       case "up":
         endX = startX;
@@ -94,7 +99,6 @@ export default class Canvas {
 
     // Draw the line from (startX, startY) to (endX, endY), but offset by half of positionMarkerRadius
     this.drawLine(
-      ctx,
       {
         startX:
           startX +
@@ -117,16 +121,15 @@ export default class Canvas {
     );
 
     this.drawArrowhead(
-      ctx,
       { x: endX + arrowheadOffsetX, y: endY + arrowheadOffsetY, direction },
       opts
     );
 
     // Draw positionMarker centered around (endX, endY)
-    this.positionMarker(ctx, endX, endY, moveCount, opts);
+    this.positionMarker(endX, endY, moveCount, opts);
   }
 
-  static drawArrowhead(ctx, { x, y, direction }, opts = {}) {
+  drawArrowhead({ x, y, direction }, opts = {}) {
     const { length = 10, width = 5, color = "black" } = opts;
 
     let angle;
@@ -149,23 +152,22 @@ export default class Canvas {
     }
 
     this.withContextSettings(
-      ctx,
       { strokeStyle: color, fillStyle: color, lineWidth: width },
       () => {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(angle);
+        this.ctx.save();
+        this.ctx.translate(x, y);
+        this.ctx.rotate(angle);
 
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-length, width);
-        ctx.lineTo(-length, -width);
-        ctx.closePath();
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, 0);
+        this.ctx.lineTo(-length, width);
+        this.ctx.lineTo(-length, -width);
+        this.ctx.closePath();
 
-        ctx.fill();
-        ctx.stroke();
+        this.ctx.fill();
+        this.ctx.stroke();
 
-        ctx.restore();
+        this.ctx.restore();
       }
     );
   }
