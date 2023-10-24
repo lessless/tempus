@@ -57,107 +57,35 @@ export default class Canvas {
     opts = {}
   ) {
     let endX, endY;
-    const offset = this.positionMarkerRadius;
+    const originalStartX = startX;
+    const originalStartY = startY;
+
     switch (direction) {
       case "up":
-        endX = startX;
-        endY = startY - destination;
+        endX = originalStartX;
+        endY = originalStartY - destination;
+        startY = originalStartY - this.positionMarkerRadius;
         break;
       case "right":
-        endX = startX + destination;
-        endY = startY;
+        endX = originalStartX + destination;
+        endY = originalStartY;
+        startX = originalStartX + this.positionMarkerRadius;
         break;
       case "down":
-        endX = startX;
-        endY = startY + destination;
+        endX = originalStartX;
+        endY = originalStartY + destination;
+        startY = originalStartY + this.positionMarkerRadius;
         break;
       case "left":
-        endX = startX - destination;
-        endY = startY;
+        endX = originalStartX - destination;
+        endY = originalStartY;
+        startX = originalStartX - this.positionMarkerRadius;
         break;
       default:
         console.error("Invalid direction");
         return;
     }
-
-    // Offset endX and endY for drawing the arrowhead
-    const arrowheadOffsetX =
-      direction === "right" ? -offset : direction === "left" ? offset : 0;
-    const arrowheadOffsetY =
-      direction === "down" ? -offset : direction === "up" ? offset : 0;
-
-    // Draw the line from (startX, startY) to (endX, endY), but offset by half of positionMarkerRadius
-    this.drawLine(
-      {
-        startX:
-          startX +
-          (direction === "right"
-            ? offset / 2
-            : direction === "left"
-            ? -offset / 2
-            : 0),
-        startY:
-          startY +
-          (direction === "down"
-            ? offset / 2
-            : direction === "up"
-            ? -offset / 2
-            : 0),
-        endX: endX + arrowheadOffsetX,
-        endY: endY + arrowheadOffsetY,
-      },
-      opts
-    );
-
-    this.drawArrowhead(
-      { x: endX + arrowheadOffsetX, y: endY + arrowheadOffsetY, direction },
-      opts
-    );
-
-    // Draw positionMarker centered around (endX, endY)
+    this.drawLine({ startX, startY, endX, endY }, opts);
     this.positionMarker(endX, endY, moveCount, opts);
-  }
-
-  drawArrowhead({ x, y, direction }, opts = {}) {
-    const { length = 10, width = 5, color = "black" } = opts;
-
-    let angle;
-    switch (direction) {
-      case "up":
-        angle = -Math.PI / 2;
-        break;
-      case "right":
-        angle = 0;
-        break;
-      case "down":
-        angle = Math.PI / 2;
-        break;
-      case "left":
-        angle = Math.PI;
-        break;
-      default:
-        console.error("Invalid direction");
-        return;
-    }
-
-    this.withContextSettings(
-      { strokeStyle: color, fillStyle: color, lineWidth: width },
-      () => {
-        this.ctx.save();
-        this.ctx.translate(x, y);
-        this.ctx.rotate(angle);
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(-length, width);
-        this.ctx.lineTo(-length, -width);
-        this.ctx.closePath();
-
-        this.ctx.fill();
-        this.ctx.stroke();
-
-        this.ctx.restore();
-      }
-    );
   }
 }
