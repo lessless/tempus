@@ -10,12 +10,8 @@ export default class Grid {
   }
 
   draw() {
-    this.setCanvasDimensions();
-    Canvas.drawGrid(this.ctx, this.gridSize, this.cellSize);
-  }
-
-  setCanvasDimensions() {
     this.canvas.height = this.canvas.width = this.gridSize * this.cellSize;
+    Canvas.drawGrid(this.ctx, this.gridSize, this.cellSize);
   }
 
   markStartingPoint(position) {

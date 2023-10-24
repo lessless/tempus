@@ -34,6 +34,16 @@ export default class Canvas {
     Object.assign(ctx, originalSettings);
   }
 
+  static drawNumberInCircle(ctx, x, y, number, opts = {}) {
+    const { color = "red" } = opts;
+    const originalSettings = { fillStyle: ctx.fillStyle, font: ctx.font };
+
+    this.drawDot(ctx, x, y, { color, radius: 12 });
+    this.drawText(ctx, x - 5, y + 6, number, { fontSize: 16 });
+
+    Object.assign(ctx, originalSettings);
+  }
+
   static drawDot(ctx, x, y, opts = {}) {
     const { color = "black", radius = 5 } = opts;
     const originalSettings = { fillStyle: ctx.fillStyle };
@@ -43,16 +53,6 @@ export default class Canvas {
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
     ctx.fill();
-    Object.assign(ctx, originalSettings);
-  }
-
-  static drawNumberInCircle(ctx, x, y, number, opts = {}) {
-    const { color = "red" } = opts;
-    const originalSettings = { fillStyle: ctx.fillStyle, font: ctx.font };
-
-    this.drawDot(ctx, x, y, { color, radius: 12 });
-    this.drawText(ctx, x - 5, y + 6, number, { fontSize: 16 });
-
     Object.assign(ctx, originalSettings);
   }
 
