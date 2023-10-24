@@ -23,9 +23,13 @@ export const TransportationGrid = {
   },
 
   markStartingPoint(ctx, position) {
-    Canvas.drawDot(ctx, position.x * cellSize, position.y * cellSize, {
-      color: "red",
-    });
+    Canvas.drawNumberInCircle(
+      ctx,
+      position.x * cellSize,
+      position.y * cellSize,
+      1,
+      { color: "aquamarine" }
+    );
   },
 
   move({ current_position, direction, num_cells }, ctx) {

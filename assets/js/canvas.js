@@ -45,4 +45,15 @@ export default class Canvas {
     ctx.fill();
     Object.assign(ctx, originalSettings);
   }
+
+  static drawNumberInCircle(ctx, x, y, number, opts = {}) {
+    const { color = "red" } = opts;
+    const originalSettings = { fillStyle: ctx.fillStyle, font: ctx.font };
+
+    this.drawDot(ctx, x, y, { color, radius: 12 });
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText(number, x - 5, y + 6);
+    Object.assign(ctx, originalSettings);
+  }
 }
